@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.IO;
 using UnityEngine;
 using Game.Util;
+using System;
 
 public class TwitchChat : Singleton<TwitchChat>
 {
@@ -12,14 +13,16 @@ public class TwitchChat : Singleton<TwitchChat>
     // public string Username;
     // public string ChannelName;
     
-    private CommandCollection _commands;
+    public CommandCollection _commands;
+    private TwitchCredentials credentials;
     private TcpClient _twitchClient;
     private StreamReader _reader;
     private StreamWriter _writer;
 
-
-    void Awake(){
-        DontDestroyOnLoad(this);
+    protected override void Awake()
+    {
+        base.Awake();
+        DontDestroyOnLoad(this.gameObject);
     }
 
     void Update()
@@ -33,8 +36,8 @@ public class TwitchChat : Singleton<TwitchChat>
          _commands = commands;
     }
 
-    public void Connect(TwitchCredentials credentials, CommandCollection commands){
-        _commands = commands;
+    public void Connect(TwitchCredentials cred){
+        credentials = cred;
         _twitchClient = new TcpClient("irc.chat.twitch.tv", 6667);
         _reader = new StreamReader(_twitchClient.GetStream());
         _writer = new StreamWriter(_twitchClient.GetStream());
@@ -47,40 +50,66 @@ public class TwitchChat : Singleton<TwitchChat>
     }
 
     private void ReadChat(){
-        if(_twitchClient.Available > 0){
-            string message = _reader.ReadLine();
-            Debug.Log(message);
+        if (_twitchClient.Available <= 0) return;
+
+        string message = _reader.ReadLine();
+        Debug.Log(message);
             
-            // Twitch sends a PING message every 5 minutes or so. We MUST respond back with PONG or we will be disconnected 
-            if (message.Contains("PING")) {
-                _writer.WriteLine("PONG");
-                _writer.Flush();
-                return;
-            }
-
-            if (message.Contains("PRIVMSG")){
-                var splitPoint = message.IndexOf("!", 1);
-                var author = message.Substring(0, splitPoint);
-                author = author.Substring(1);
-
-                // users message
-                splitPoint = message.IndexOf(":", 1);
-                message = message.Substring(splitPoint + 1);
-
-                if(message.StartsWith(TwitchCommands.CmdPrefix)){
-                    // get the first word
-                    int index =  message.IndexOf(" ");
-                    string command = index > -1 ? message.Substring(0, index) : message;
-                    _commands.ExecuteCommand(
-                        command,
-                        new TwitchCommandData {
-                            Author = author,
-                            Message = message
-                    });
-                }
-            }
+        // Twitch sends a PING message every 5 minutes or so. We MUST respond back with PONG or we will be disconnected 
+        if (message.Contains("PING")) {
+            _writer.WriteLine("PONG");
+            _writer.Flush();
+            return;
         }
+        //change scene when connected
+        if (ScenesManager.Instance.ActualScene() == 0 && message.Contains("JOIN #" + credentials.ChannelName))
+        {
+            ScenesManager.Instance.ChangeScene(1);
+        }
+
+        if (message.Contains("PRIVMSG")) {
+            var splitPoint = message.IndexOf(_commands.cmdPrefix, 1);
+            var author = message.Substring(0, splitPoint);
+            author = author.Substring(1);
+
+            // users message
+            splitPoint = message.IndexOf(":", 1);
+            message = message.Substring(splitPoint + 1);
+
+            if (message.StartsWith(_commands.cmdPrefix)){
+                // get the first word
+                int index =  message.IndexOf(" ");
+                string command = index > -1 ? message.Substring(1, index-1) : message.Substring(1);
+
+                string actualMessage;
+                try
+                {
+                    actualMessage = message.Substring(0 + (_commands.cmdPrefix + command).Length).TrimStart(' ');
+                }
+                catch(ArgumentOutOfRangeException e)
+                {
+                    actualMessage = "";
+                }
+
+                _commands.ExecuteCommand(
+                    command,
+                    new TwitchCommandData
+                    {
+                        Author = author,
+                        Message = actualMessage
+                    });
+            }
+        } 
     }
+
+    public void WriteChat(TwitchCommandData data)
+    {
+        //if (_twitchClient.Available <= 0) return;
+        Debug.Log($"<color=yellow>{"PRIVMSG #" + credentials.ChannelName + " :" + data.Message}</color>");
+        _writer.WriteLine("PRIVMSG #" + credentials.ChannelName+" : "+ data.Message);
+        _writer.Flush();
+    }
+
 }
 
     

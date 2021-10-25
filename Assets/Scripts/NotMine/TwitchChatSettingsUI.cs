@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using System.Collections;
 
 public class TwitchChatSettingsUI : MonoBehaviour
 {
@@ -11,24 +11,30 @@ public class TwitchChatSettingsUI : MonoBehaviour
     public Toggle saveToggle;
     public TwitchChat TwitchChat;
 
+    private readonly string passwordKey = "Password";
+    private readonly string channelNameKey = "ChannelName";
+    private readonly string userNameKey = "UserName";
 
-    void Start(){
+
+    void Start()
+    {
         // you can save the other info too in player prefs or however you save things
-        if(PlayerPrefs.HasKey("Password") && PlayerPrefs.HasKey("ChannelName") && PlayerPrefs.HasKey("UserName"))
+        if (PlayerPrefs.HasKey(passwordKey) && PlayerPrefs.HasKey(channelNameKey) && PlayerPrefs.HasKey(userNameKey))
         {
-            TwitchCredentials credentials = new TwitchCredentials
-            {
-                ChannelName = PlayerPrefs.GetString("ChannelName"),
-                Username = PlayerPrefs.GetString("UserName"),
-                Password = PlayerPrefs.GetString("Password")
-            };
-            TwitchChat.Connect(credentials, new CommandCollection());
+
+            ChannelNameInput.text = PlayerPrefs.GetString(channelNameKey);
+            UsernameInput.text = PlayerPrefs.GetString(userNameKey);
+            PasswordInput.text = PlayerPrefs.GetString(passwordKey);
+
+            Debug.Log($"<color=blue> auto connected </color>");
+            StartCoroutine(Initiallize());
         }
     }
 
-    public void ClearData()
+    IEnumerator Initiallize()
     {
-        PlayerPrefs.DeleteAll();
+        yield return new WaitUntil(() => TwitchChat.Instance != null);
+        Connect();
     }
 
     public void Connect(){
@@ -40,11 +46,11 @@ public class TwitchChatSettingsUI : MonoBehaviour
         };
         if (saveToggle.isOn)
         {
-            PlayerPrefs.SetString("UserName", UsernameInput.text.ToLower());
-            PlayerPrefs.SetString("ChannelName", UsernameInput.text.ToLower());
-            PlayerPrefs.SetString("Password", PasswordInput.text);
+            PlayerPrefs.SetString(userNameKey, UsernameInput.text.ToLower());
+            PlayerPrefs.SetString(channelNameKey, ChannelNameInput.text.ToLower());
+            PlayerPrefs.SetString(passwordKey, PasswordInput.text);
         }
-        TwitchChat.Connect(credentials, new CommandCollection());
+        TwitchChat.Connect(credentials);
     }
 
 }
