@@ -216,7 +216,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2142277886129550299}
-  m_LocalRotation: {x: 0.27908444, y: 0.00000003075223, z: -0.000000008937589, w: 0.9602666}
+  m_LocalRotation: {x: 0.27908447, y: -0.0000000112560965, z: 0.0000000032713847, w: 0.9602666}
   m_LocalPosition: {x: 0, y: 3.53, z: -5.5599995}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -672,10 +672,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e434cc86c2412284787b7c9694411a63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerName: "Jos\xE9"
+  playerName: Deds
   _playerCamera: {fileID: 2237165913881273630}
   virtualCamera: {fileID: 2142277886129550299}
   nameArea: {fileID: 1923816650157948169}
+  enegyBar: {fileID: 1342077501139429220}
 --- !u!1 &2142277887373333854
 GameObject:
   m_ObjectHideFlags: 0
@@ -765,6 +766,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fill: {fileID: 2142277887373333840}
+  currentFill: 0
 --- !u!1 &7566319456274930697
 GameObject:
   m_ObjectHideFlags: 0
@@ -924,7 +926,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8949915908262315682}
-  m_LocalRotation: {x: 0.27908444, y: 0.00000003075223, z: -0.000000008937589, w: 0.9602666}
+  m_LocalRotation: {x: 0.27908447, y: -0.0000000112560965, z: 0.0000000032713847, w: 0.9602666}
   m_LocalPosition: {x: 0, y: 3.53, z: -5.5599995}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []

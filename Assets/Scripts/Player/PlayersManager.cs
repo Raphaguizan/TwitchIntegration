@@ -8,6 +8,8 @@ public class PlayersManager : MonoBehaviour
     public List<GameObject> players;
     public GameObject playerPrefab;
 
+    public Vector2 fillAdd;
+
     private readonly int InitialLayerNum = 6;
 
     private void Start()
@@ -15,6 +17,7 @@ public class PlayersManager : MonoBehaviour
         players = new List<GameObject>();
     }
 
+    #region player commands
     public void AddPlayer(TwitchCommandData data)
     {
         var aux = Instantiate(playerPrefab, transform);
@@ -23,6 +26,19 @@ public class PlayersManager : MonoBehaviour
         players.Add(aux);
         CameraAdjust();
     }
+    public void AddCharge(TwitchCommandData data)
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            Player indexPlayer = players[i].GetComponent<Player>();
+            if (indexPlayer.playerName.Equals(data.Author))
+            {
+                indexPlayer.AddFill(Random.Range(fillAdd.x, fillAdd.y));
+                return;
+            }
+        }
+    }
+    #endregion
 
     private void CameraAdjust()
     {
@@ -36,4 +52,5 @@ public class PlayersManager : MonoBehaviour
             playerCam.rect = new Rect(screenSize*i, 0, screenSize, 1);
         }
     }
+
 }

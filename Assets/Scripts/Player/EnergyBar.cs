@@ -7,10 +7,19 @@ public class EnergyBar : MonoBehaviour
 {
     public Image fill;
 
+    public float currentFill { get; private set; }
+
     public void SetFill(float f)
     {
-        fill.fillAmount = f;
+        currentFill = f;
+        fill.fillAmount = currentFill;
         fill.color = FillColorAdjust();
+    }
+
+    public void AddFill(float f)
+    {
+        currentFill += f;
+        SetFill(currentFill);
     }
 
     private Color FillColorAdjust()
