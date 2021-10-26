@@ -86,7 +86,7 @@ public class TwitchChat : Singleton<TwitchChat>
                 {
                     actualMessage = message.Substring(0 + (_commands.cmdPrefix + command).Length).TrimStart(' ');
                 }
-                catch(ArgumentOutOfRangeException e)
+                catch(ArgumentOutOfRangeException)
                 {
                     actualMessage = "";
                 }
