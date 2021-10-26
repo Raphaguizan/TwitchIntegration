@@ -45,6 +45,7 @@ public class TwitchChat : Singleton<TwitchChat>
         _writer.WriteLine("PASS " + credentials.Password);
         _writer.WriteLine("NICK " + credentials.Username);
         _writer.WriteLine("USER " + credentials.Username + " 8 * :" + credentials.Username);
+        _writer.WriteLine("CAP REQ :twitch.tv/tags");
         _writer.WriteLine("JOIN #" + credentials.ChannelName);
         _writer.Flush();
     }
@@ -53,7 +54,7 @@ public class TwitchChat : Singleton<TwitchChat>
         if (_twitchClient.Available <= 0) return;
 
         string message = _reader.ReadLine();
-        Debug.Log(message);
+        //Debug.Log(message);
             
         // Twitch sends a PING message every 5 minutes or so. We MUST respond back with PONG or we will be disconnected 
         if (message.Contains("PING")) {
@@ -68,13 +69,28 @@ public class TwitchChat : Singleton<TwitchChat>
         }
 
         if (message.Contains("PRIVMSG")) {
-            var splitPoint = message.IndexOf(_commands.cmdPrefix, 1);
-            var author = message.Substring(0, splitPoint);
-            author = author.Substring(1);
+            Debug.Log(message);
+            var splitPoint = message.IndexOf("name=");
+            var nameString = message.Substring(splitPoint+5);
+            var cutTag = nameString.IndexOf(";");
+            var author = nameString.Substring(0,cutTag);
+            Debug.Log(author);
+
+
+            splitPoint = message.IndexOf("color=");
+            nameString = message.Substring(splitPoint + 6);
+            cutTag = nameString.IndexOf(";");
+            var colorString = nameString.Substring(0, cutTag);
+            Color newCol;
+            ColorUtility.TryParseHtmlString(colorString, out newCol);
+            
+            Debug.Log(newCol);
 
             // users message
             splitPoint = message.IndexOf(":", 1);
             message = message.Substring(splitPoint + 1);
+
+            //Debug.Log(message);
 
             if (message.StartsWith(_commands.cmdPrefix)){
                 // get the first word
@@ -90,6 +106,11 @@ public class TwitchChat : Singleton<TwitchChat>
                 {
                     actualMessage = "";
                 }
+
+                int colorIndex = message.IndexOf("color=");
+                string hexColor = message.Substring(colorIndex, colorIndex + 7);
+                Debug.Log(hexColor);
+                Debug.Log(actualMessage);
 
                 _commands.ExecuteCommand(
                     command,

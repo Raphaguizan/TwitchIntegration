@@ -15,6 +15,7 @@ public class PlayersManager : MonoBehaviour
     private void Start()
     {
         players = new List<GameObject>();
+        CleanList();
     }
 
     #region player commands
@@ -22,7 +23,7 @@ public class PlayersManager : MonoBehaviour
     {
         var aux = Instantiate(playerPrefab, transform);
         aux.transform.position = new Vector3(transform.position.x + 4 * players.Count, transform.position.y, transform.position.z);
-        aux.GetComponent<Player>().Initialize(data.Author);
+        aux.GetComponent<Player>().Initialize(data.Author, Color.black);//CHANGE
         players.Add(aux);
         CameraAdjust();
     }
@@ -51,6 +52,15 @@ public class PlayersManager : MonoBehaviour
             playerCam.cullingMask = LayerMask.GetMask("Default", "TransparentFX","Ignore Raycast", "Water", "UI","Player"+i);
             playerCam.rect = new Rect(screenSize*i, 0, screenSize, 1);
         }
+    }
+
+    private void CleanList()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            Destroy(players[i]);
+        }
+        players.Clear();
     }
 
 }

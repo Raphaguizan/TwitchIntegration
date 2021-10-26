@@ -6,6 +6,8 @@ using TMPro;
 public class Player : MonoBehaviour
 {
     public string playerName;
+    public Color playerColor;
+    public bool canCharge { get; private set; }
 
     [SerializeField]
     private Camera _playerCamera;
@@ -18,19 +20,23 @@ public class Player : MonoBehaviour
     [SerializeField]
     private EnergyBar enegyBar;
 
-    public void Initialize(string name)
+    public void Initialize(string name, Color color)
     {
         playerName = name;
+        playerColor = color;
         nameArea.text = name;
         nameArea.color = Random.ColorHSV();
         enegyBar.SetFill(0);
+        canCharge = true;
     }
 
     public void AddFill(float add)
     {
+        if (!canCharge) return;
         if (enegyBar.currentFill >= 1)
         {
             // DO SOMETHING
+            canCharge = false;
             return;
         }
         enegyBar.AddFill(add);

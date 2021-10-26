@@ -38,10 +38,10 @@ public class EnergyBar : MonoBehaviour
             return Color.green;
         }
     }
+#if UNITY_EDITOR
     private void OnValidate()
     {
-        Debug.Log("validate");
         fill.color = FillColorAdjust();
     }
-
+#endif
 }
