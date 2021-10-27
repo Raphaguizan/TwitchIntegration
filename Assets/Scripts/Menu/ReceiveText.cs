@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Twitch.Chat;
 
 [RequireComponent(typeof(TextMeshProUGUI))]
 public class ReceiveText : MonoBehaviour

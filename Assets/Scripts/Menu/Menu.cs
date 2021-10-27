@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Twitch.Chat;
 public class Menu : MonoBehaviour
 {
     public GameObject menuScreen;
@@ -38,13 +38,12 @@ public class Menu : MonoBehaviour
     [Space]
     public Transform content;
     public GameObject commandPrefab;
-    public CommandCollection cmdCollection;
     private void ShowCommands()
     {
-        for (int i = 0; i < cmdCollection.commands.Count; i++)
+        for (int i = 0; i < CommandCollection.Instance.commands.Count; i++)
         {
             GameObject commandAux = Instantiate(commandPrefab, content);
-            commandAux.GetComponent<CommandPrefab>().Initialize(cmdCollection.cmdPrefix+ cmdCollection.commands[i].cmd, cmdCollection.commands[i].description);
+            commandAux.GetComponent<CommandPrefab>().Initialize(CommandCollection.Instance.commands[i]);
         }
     }
 }
