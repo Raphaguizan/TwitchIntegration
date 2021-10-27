@@ -21,6 +21,6 @@ public struct TwitchCredentials
 public struct TwitchCommandData
 {
     public string Author;
-    public Color color;
+    public Color Color;
     public string Message;
 }

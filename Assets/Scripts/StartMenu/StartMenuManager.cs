@@ -37,6 +37,7 @@ public class StartMenuManager : MonoBehaviour
 
         var nameAux = Instantiate(playerNamePrefab, content);
         nameAux.GetComponentInChildren<TextMeshProUGUI>().text = data.Author;
+        nameAux.GetComponentInChildren<TextMeshProUGUI>().color = data.Color;
         playerController.Add(nameAux);
         playerManager.AddPlayer(data);
     }

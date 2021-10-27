@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Net.Sockets;
 using System.IO;
 using UnityEngine;
@@ -18,6 +19,11 @@ public class TwitchChat : Singleton<TwitchChat>
     private TcpClient _twitchClient;
     private StreamReader _reader;
     private StreamWriter _writer;
+
+    //regex
+    readonly string messagePattern = @": *!(\w)*";
+    readonly string namePattern = @"name=([^;]*)";
+    readonly string colorPattern = @"color=([^;]*)";
 
     protected override void Awake()
     {
@@ -70,56 +76,88 @@ public class TwitchChat : Singleton<TwitchChat>
 
         if (message.Contains("PRIVMSG")) {
             Debug.Log(message);
-            var splitPoint = message.IndexOf("name=");
-            var nameString = message.Substring(splitPoint+5);
-            var cutTag = nameString.IndexOf(";");
-            var author = nameString.Substring(0,cutTag);
-            Debug.Log(author);
-
-
-            splitPoint = message.IndexOf("color=");
-            nameString = message.Substring(splitPoint + 6);
-            cutTag = nameString.IndexOf(";");
-            var colorString = nameString.Substring(0, cutTag);
-            Color newCol;
-            ColorUtility.TryParseHtmlString(colorString, out newCol);
             
-            Debug.Log(newCol);
+            Match userMessageMatch = Regex.Match(message, messagePattern);
+            if (userMessageMatch.Success)
+            {
+                //get command
+                string command = userMessageMatch.Value.Substring(2);
 
-            // users message
-            splitPoint = message.IndexOf(":", 1);
-            message = message.Substring(splitPoint + 1);
+                //get command message
+                int messageIndex = userMessageMatch.Index + command.Length + 3;
+                string commandMessage ="";
+                if (messageIndex <= message.Length)
+                    commandMessage = message.Substring(messageIndex);
+                
+                //get name
+                Match userNameMatch = Regex.Match(message, namePattern);
+                string author = userNameMatch.Value.Split('=')[1];
 
-            //Debug.Log(message);
-
-            if (message.StartsWith(_commands.cmdPrefix)){
-                // get the first word
-                int index =  message.IndexOf(" ");
-                string command = index > -1 ? message.Substring(1, index-1) : message.Substring(1);
-
-                string actualMessage;
-                try
-                {
-                    actualMessage = message.Substring(0 + (_commands.cmdPrefix + command).Length).TrimStart(' ');
-                }
-                catch(ArgumentOutOfRangeException)
-                {
-                    actualMessage = "";
-                }
-
-                int colorIndex = message.IndexOf("color=");
-                string hexColor = message.Substring(colorIndex, colorIndex + 7);
-                Debug.Log(hexColor);
-                Debug.Log(actualMessage);
+                //get color
+                Match userColorMatch = Regex.Match(message, colorPattern);
+                string colorString = userColorMatch.Value.Split('=')[1];
+                Color newCol;
+                ColorUtility.TryParseHtmlString(colorString, out newCol);
 
                 _commands.ExecuteCommand(
                     command,
                     new TwitchCommandData
                     {
                         Author = author,
-                        Message = actualMessage
+                        Message = commandMessage,
+                        Color = newCol
                     });
             }
+            //var splitPoint = message.IndexOf("name=");
+            //var nameString = message.Substring(splitPoint+5);
+            //var cutTag = nameString.IndexOf(";");
+            //var author = nameString.Substring(0,cutTag);
+            //Debug.Log(author);
+
+
+            //splitPoint = message.IndexOf("color=");
+            //nameString = message.Substring(splitPoint + 6);
+            //cutTag = nameString.IndexOf(";");
+            //var colorString = nameString.Substring(0, cutTag);
+            //Color newCol;
+            //ColorUtility.TryParseHtmlString(colorString, out newCol);
+
+            //Debug.Log(newCol);
+
+            // users message
+            //splitPoint = message.IndexOf(":", 1);
+            //message = message.Substring(splitPoint + 1);
+
+            //Debug.Log(message);
+
+            //if (message.StartsWith(_commands.cmdPrefix)){
+            //    // get the first word
+            //    int index =  message.IndexOf(" ");
+            //    string command = index > -1 ? message.Substring(1, index-1) : message.Substring(1);
+
+            //    string actualMessage;
+            //    try
+            //    {
+            //        actualMessage = message.Substring(0 + (_commands.cmdPrefix + command).Length).TrimStart(' ');
+            //    }
+            //    catch(ArgumentOutOfRangeException)
+            //    {
+            //        actualMessage = "";
+            //    }
+
+            //    int colorIndex = message.IndexOf("color=");
+            //    string hexColor = message.Substring(colorIndex, colorIndex + 7);
+            //    Debug.Log(hexColor);
+            //    Debug.Log(actualMessage);
+
+            //    _commands.ExecuteCommand(
+            //        command,
+            //        new TwitchCommandData
+            //        {
+            //            //Author = author,
+            //            Message = actualMessage
+            //        });
+            //}
         } 
     }
 

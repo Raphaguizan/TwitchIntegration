@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
         playerName = name;
         playerColor = color;
         nameArea.text = name;
-        nameArea.color = Random.ColorHSV();
+        nameArea.color = playerColor;
         enegyBar.SetFill(0);
         canCharge = true;
     }

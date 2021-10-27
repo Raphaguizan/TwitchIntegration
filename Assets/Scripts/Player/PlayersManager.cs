@@ -23,7 +23,7 @@ public class PlayersManager : MonoBehaviour
     {
         var aux = Instantiate(playerPrefab, transform);
         aux.transform.position = new Vector3(transform.position.x + 4 * players.Count, transform.position.y, transform.position.z);
-        aux.GetComponent<Player>().Initialize(data.Author, Color.black);//CHANGE
+        aux.GetComponent<Player>().Initialize(data.Author, data.Color);
         players.Add(aux);
         CameraAdjust();
     }
