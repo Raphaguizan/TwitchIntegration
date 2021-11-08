@@ -12,34 +12,44 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Camera _playerCamera;
     [SerializeField]
-    private GameObject virtualCamera;
+    private GameObject _virtualCamera;
     [SerializeField]
-    private TextMeshProUGUI nameArea;
+    private TextMeshProUGUI _nameArea;
     
     [Space]
     [SerializeField]
-    private EnergyBar enegyBar;
+    private EnergyBar _enegyBar;
+    
+    [Space]
+    [SerializeField]
+    private PlayerAnimations _animations;
+
+    private void Start()
+    {
+        StartMenuManager.StartGameEvent += StartGameEvents;
+    }
 
     public void Initialize(string name, Color color)
     {
         playerName = name;
         playerColor = color;
-        nameArea.text = name;
-        nameArea.color = playerColor;
-        enegyBar.SetFill(0);
-        canCharge = true;
+        _nameArea.text = name;
+        _nameArea.color = playerColor;
+        _enegyBar.SetFill(0);
+        canCharge = false;
     }
 
-    public void AddFill(float add)
+    public void AddFill(float add, bool crit)
     {
         if (!canCharge) return;
-        if (enegyBar.currentFill >= 1)
+        if (_enegyBar.currentFill >= 1)
         {
             // DO SOMETHING
             canCharge = false;
             return;
         }
-        enegyBar.AddFill(add);
+        _enegyBar.AddFill(add);
+        if(crit) _animations.TriggerCelebrate();
     }
 
     public Camera GetPlayerCamera()
@@ -48,6 +58,25 @@ public class Player : MonoBehaviour
     }
     public void ChangeVirtualCameraLayer(int Layer)
     {
-        virtualCamera.layer = Layer;
+        _virtualCamera.layer = Layer;
+    }
+
+    private void StartGameEvents()
+    {
+        _animations.TriggerCharge();
+        canCharge = true;
+    }
+
+
+    private void EndGameEvents(string name)
+    {
+        if (playerName.Equals(name))
+        {
+            _animations.TriggerWin();
+        }
+        else
+        {
+            _animations.TriggerLose();
+        }
     }
 }

@@ -16,6 +16,7 @@ public class Menu : MonoBehaviour
     }
     public void BackToLogin()
     {
+        Time.timeScale = 1;
         ScenesManager.Instance.ChangeScene(0);
     }
 

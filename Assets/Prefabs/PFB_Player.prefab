@@ -216,7 +216,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2142277886129550299}
-  m_LocalRotation: {x: 0.27908444, y: 0.00000003075223, z: -0.000000008937589, w: 0.9602666}
+  m_LocalRotation: {x: 0.27908447, y: -0.0000000112560965, z: 0.0000000032713847, w: 0.9602666}
   m_LocalPosition: {x: 0, y: 3.53, z: -5.5599995}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -636,6 +636,7 @@ GameObject:
   - component: {fileID: 2142277887364728535}
   - component: {fileID: 2142277887364728532}
   - component: {fileID: 9072872826286823415}
+  - component: {fileID: 167986888201049013}
   m_Layer: 0
   m_Name: PFB_Player
   m_TagString: Untagged
@@ -651,7 +652,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2142277887364728533}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.74, z: 30.58}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 704028220597433142}
@@ -676,9 +677,10 @@ MonoBehaviour:
   playerName: Deds
   playerColor: {r: 0, g: 0, b: 0, a: 0}
   _playerCamera: {fileID: 2237165913881273630}
-  virtualCamera: {fileID: 2142277886129550299}
-  nameArea: {fileID: 1923816650157948169}
-  enegyBar: {fileID: 1342077501139429220}
+  _virtualCamera: {fileID: 2142277886129550299}
+  _nameArea: {fileID: 1923816650157948169}
+  _enegyBar: {fileID: 1342077501139429220}
+  _animations: {fileID: 167986888201049013}
 --- !u!95 &9072872826286823415
 Animator:
   serializedVersion: 3
@@ -698,6 +700,26 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &167986888201049013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142277887364728533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3a6f2b230bed354c844431682093511, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  run: run
+  charging: charge
+  celebrate1: celebrating_1
+  celebrate2: celebrating_2
+  fall1: fall_1
+  fall2: fall_2
+  win: win
+  lose: lose
 --- !u!1 &2142277887373333854
 GameObject:
   m_ObjectHideFlags: 0
@@ -946,7 +968,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8949915908262315682}
-  m_LocalRotation: {x: 0.27908444, y: 0.00000003075223, z: -0.000000008937589, w: 0.9602666}
+  m_LocalRotation: {x: 0.27908447, y: -0.0000000112560965, z: 0.0000000032713847, w: 0.9602666}
   m_LocalPosition: {x: 0, y: 3.53, z: -5.5599995}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []

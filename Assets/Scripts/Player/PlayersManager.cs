@@ -35,7 +35,8 @@ public class PlayersManager : MonoBehaviour
             Player indexPlayer = players[i].GetComponent<Player>();
             if (indexPlayer.playerName.Equals(data.Author))
             {
-                indexPlayer.AddFill(Random.Range(fillAdd.x, fillAdd.y));
+                float fillToAdd = Random.Range(fillAdd.x, fillAdd.y);
+                indexPlayer.AddFill(fillToAdd, (fillToAdd/fillAdd.y) >= .9f);
                 return;
             }
         }
