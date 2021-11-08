@@ -22,9 +22,9 @@ public class PlayerAnimations : MonoBehaviour
         myAnim = GetComponent<Animator>();
     }
 
-    public void TriggerRun()
+    public void TriggerRun(bool value)
     {
-        myAnim.SetTrigger(run);
+        myAnim.SetBool(run, value);
     }
     public void TriggerCharge()
     {

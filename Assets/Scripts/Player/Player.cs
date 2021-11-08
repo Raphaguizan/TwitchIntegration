@@ -7,7 +7,9 @@ public class Player : MonoBehaviour
 {
     public string playerName;
     public Color playerColor;
-    public bool canCharge { get; private set; }
+    public float runningSpeed;
+    public float fallTime;
+    public bool CanCharge { get; private set; }
 
     [SerializeField]
     private Camera _playerCamera;
@@ -18,38 +20,32 @@ public class Player : MonoBehaviour
     
     [Space]
     [SerializeField]
-    private EnergyBar _enegyBar;
+    private EnergyBar enegyBar;
     
     [Space]
     [SerializeField]
-    private PlayerAnimations _animations;
+    private PlayerAnimations animations;
+
+    private bool _isRunning;
+    private Vector3 finishLine;
 
     private void Start()
     {
         StartMenuManager.StartGameEvent += StartGameEvents;
+        PlayersManager.vitoriousPlayerEvent += name => EndGameEvents(name);
     }
 
-    public void Initialize(string name, Color color)
+    public void Initialize(string name, Color color, Vector3 finish)
     {
         playerName = name;
         playerColor = color;
         _nameArea.text = name;
+        finishLine = finish;
         _nameArea.color = playerColor;
-        _enegyBar.SetFill(0);
-        canCharge = false;
-    }
+        enegyBar.SetFill(0);
 
-    public void AddFill(float add, bool crit)
-    {
-        if (!canCharge) return;
-        if (_enegyBar.currentFill >= 1)
-        {
-            // DO SOMETHING
-            canCharge = false;
-            return;
-        }
-        _enegyBar.AddFill(add);
-        if(crit) _animations.TriggerCelebrate();
+        _isRunning = false;
+        CanCharge = false;
     }
 
     public Camera GetPlayerCamera()
@@ -61,22 +57,82 @@ public class Player : MonoBehaviour
         _virtualCamera.layer = Layer;
     }
 
-    private void StartGameEvents()
+    #region fill
+    public void AddFill(float add, bool crit)
     {
-        _animations.TriggerCharge();
-        canCharge = true;
+        if (!CanCharge) return;
+        if (enegyBar.currentFill >= 1)
+        {
+            StartRun();
+            return;
+        }
+        enegyBar.AddFill(add);
+        if(crit) animations.TriggerCelebrate();
+    }
+    #endregion
+
+    #region run
+    private void Update()
+    {
+        if (_isRunning && PlayersManager.IsPlaying)
+        {
+            transform.Translate(new Vector3(0,0, runningSpeed * Time.deltaTime));
+            if(transform.position.z > finishLine.z)
+            {
+                PlayersManager.Instance.ChampionPlayer(playerName);
+            }
+        }
     }
 
+    public void StartRun()
+    {
+        CanCharge = false;
+        _isRunning = true;
+        animations.TriggerRun(_isRunning);
+        StartCoroutine(FallRandom());
+    }
+
+    IEnumerator FallRandom()
+    {
+        while (PlayersManager.IsPlaying)
+        {
+            yield return new WaitForSeconds(5f);
+            if (Random.value > enegyBar.currentFill)
+            {
+                Debug.Log("caiu!!!");
+                if(_isRunning)StartCoroutine(FallWait());
+            }
+        }
+    }
+
+    IEnumerator FallWait()
+    {
+        _isRunning = false;
+        animations.TriggerRun(_isRunning);
+        animations.TriggerFall();
+        yield return new WaitForSeconds(fallTime);
+        _isRunning = true;
+        animations.TriggerRun(_isRunning);
+    }
+    #endregion
+
+    #region game Events
+    private void StartGameEvents()
+    {
+        animations.TriggerCharge();
+        CanCharge = true;
+    }
 
     private void EndGameEvents(string name)
     {
         if (playerName.Equals(name))
         {
-            _animations.TriggerWin();
+            animations.TriggerWin();
         }
         else
         {
-            _animations.TriggerLose();
+            animations.TriggerLose();
         }
     }
+    #endregion
 }

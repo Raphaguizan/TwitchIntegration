@@ -676,11 +676,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerName: Deds
   playerColor: {r: 0, g: 0, b: 0, a: 0}
+  runningSpeed: 6
+  fallTime: 3
   _playerCamera: {fileID: 2237165913881273630}
   _virtualCamera: {fileID: 2142277886129550299}
   _nameArea: {fileID: 1923816650157948169}
-  _enegyBar: {fileID: 1342077501139429220}
-  _animations: {fileID: 167986888201049013}
+  enegyBar: {fileID: 1342077501139429220}
+  animations: {fileID: 167986888201049013}
 --- !u!95 &9072872826286823415
 Animator:
   serializedVersion: 3

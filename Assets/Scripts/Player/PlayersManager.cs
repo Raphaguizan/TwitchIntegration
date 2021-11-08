@@ -1,22 +1,34 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Twitch.Chat;
+using Game.Util;
 
-public class PlayersManager : MonoBehaviour
+public class PlayersManager : Singleton<PlayersManager>
 {
     public int playerLimit = 10;
     public List<GameObject> players;
     public GameObject playerPrefab;
+    public Transform finishLine;
 
     public Vector2 fillAdd;
 
     private readonly int InitialLayerNum = 6;
 
+    public static Action<string> vitoriousPlayerEvent;
+    public static bool IsPlaying;
+
     private void Start()
     {
         players = new List<GameObject>();
+        IsPlaying = false;
+        StartMenuManager.StartGameEvent += StartGame;
         CleanList();
+    }
+
+    private void StartGame()
+    {
+        IsPlaying = true;
     }
 
     #region player commands
@@ -24,7 +36,7 @@ public class PlayersManager : MonoBehaviour
     {
         var aux = Instantiate(playerPrefab, transform);
         aux.transform.position = new Vector3(transform.position.x + 4 * players.Count, transform.position.y, transform.position.z);
-        aux.GetComponent<Player>().Initialize(data.Author, data.Color);
+        aux.GetComponent<Player>().Initialize(data.Author, data.Color, finishLine.position);
         players.Add(aux);
         CameraAdjust();
     }
@@ -35,13 +47,31 @@ public class PlayersManager : MonoBehaviour
             Player indexPlayer = players[i].GetComponent<Player>();
             if (indexPlayer.playerName.Equals(data.Author))
             {
-                float fillToAdd = Random.Range(fillAdd.x, fillAdd.y);
+                float fillToAdd = UnityEngine.Random.Range(fillAdd.x, fillAdd.y);
                 indexPlayer.AddFill(fillToAdd, (fillToAdd/fillAdd.y) >= .9f);
                 return;
             }
         }
     }
+    public void StartRun(TwitchCommandData data)
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            Player indexPlayer = players[i].GetComponent<Player>();
+            if (indexPlayer.playerName.Equals(data.Author))
+            {
+                indexPlayer.StartRun();
+                return;
+            }
+        }
+    }
     #endregion
+
+    public void ChampionPlayer(string name)
+    {
+        IsPlaying = false;
+        vitoriousPlayerEvent?.Invoke(name);
+    }
 
     private void CameraAdjust()
     {
