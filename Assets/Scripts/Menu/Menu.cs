@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Twitch.Chat;
+using TMPro;
 public class Menu : MonoBehaviour
 {
     public GameObject menuScreen;
@@ -9,6 +10,7 @@ public class Menu : MonoBehaviour
     private void Start()
     {
         ShowCommands();
+        finalMessageObj.text = TwitchChat.Instance.finalMessage;
     }
     public void ClearData()
     {
@@ -46,5 +48,13 @@ public class Menu : MonoBehaviour
             GameObject commandAux = Instantiate(commandPrefab, content);
             commandAux.GetComponent<CommandPrefab>().Initialize(CommandCollection.Instance.commands[i]);
         }
+    }
+
+    [Space]
+    public TMP_InputField finalMessageObj;
+
+    public void SaveFinalMessage(string message)
+    {
+        TwitchChat.Instance.SaveFinalMessage(message);
     }
 }

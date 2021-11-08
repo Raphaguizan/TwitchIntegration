@@ -810,8 +810,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 2150773298
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 0.5}
+    rgba: 2147483648
+  m_fontColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -828,8 +828,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 23.75
+  m_fontSizeBase: 23.75
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1483,6 +1483,7 @@ MonoBehaviour:
   menuScreen: {fileID: 466645736}
   content: {fileID: 1728026020}
   commandPrefab: {fileID: 5273964567922155676, guid: d49c8b0cfe0786741be4b085fcf8873e, type: 3}
+  finalMessageObj: {fileID: 586568435}
 --- !u!1 &567168337
 GameObject:
   m_ObjectHideFlags: 0
@@ -1732,9 +1733,9 @@ MonoBehaviour:
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 473675074}
-        m_TargetAssemblyTypeName: StartMenuManager, Assembly-CSharp
-        m_MethodName: AddPlayer
+      - m_Target: {fileID: 508998311}
+        m_TargetAssemblyTypeName: Menu, Assembly-CSharp
+        m_MethodName: SaveFinalMessage
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

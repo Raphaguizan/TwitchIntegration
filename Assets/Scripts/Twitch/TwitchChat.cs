@@ -22,15 +22,23 @@ namespace Twitch.Chat
         private StreamReader _reader;
         private StreamWriter _writer;
 
+        public string finalMessage { get; private set; } = "Parabéns pela vitória {name}!!!";
+
         //regex
         readonly string messagePattern = @": *!(\w)*";
         readonly string namePattern = @"name=([^;]*)";
         readonly string colorPattern = @"color=([^;]*)";
 
+        readonly string vitoryNamePattern = @"{name}";
+
         protected override void Awake()
         {
             base.Awake();
             DontDestroyOnLoad(this.gameObject);
+            if (PlayerPrefs.HasKey(nameof(finalMessage)))
+            {
+                finalMessage = PlayerPrefs.GetString(nameof(finalMessage));
+            }
         }
 
         void Update()
@@ -116,56 +124,7 @@ namespace Twitch.Chat
                             Color = newCol
                         });
                 }
-                //var splitPoint = message.IndexOf("name=");
-                //var nameString = message.Substring(splitPoint+5);
-                //var cutTag = nameString.IndexOf(";");
-                //var author = nameString.Substring(0,cutTag);
-                //Debug.Log(author);
-
-
-                //splitPoint = message.IndexOf("color=");
-                //nameString = message.Substring(splitPoint + 6);
-                //cutTag = nameString.IndexOf(";");
-                //var colorString = nameString.Substring(0, cutTag);
-                //Color newCol;
-                //ColorUtility.TryParseHtmlString(colorString, out newCol);
-
-                //Debug.Log(newCol);
-
-                // users message
-                //splitPoint = message.IndexOf(":", 1);
-                //message = message.Substring(splitPoint + 1);
-
-                //Debug.Log(message);
-
-                //if (message.StartsWith(_commands.cmdPrefix)){
-                //    // get the first word
-                //    int index =  message.IndexOf(" ");
-                //    string command = index > -1 ? message.Substring(1, index-1) : message.Substring(1);
-
-                //    string actualMessage;
-                //    try
-                //    {
-                //        actualMessage = message.Substring(0 + (_commands.cmdPrefix + command).Length).TrimStart(' ');
-                //    }
-                //    catch(ArgumentOutOfRangeException)
-                //    {
-                //        actualMessage = "";
-                //    }
-
-                //    int colorIndex = message.IndexOf("color=");
-                //    string hexColor = message.Substring(colorIndex, colorIndex + 7);
-                //    Debug.Log(hexColor);
-                //    Debug.Log(actualMessage);
-
-                //    _commands.ExecuteCommand(
-                //        command,
-                //        new TwitchCommandData
-                //        {
-                //            //Author = author,
-                //            Message = actualMessage
-                //        });
-                //}
+               
             }
         }
 
@@ -175,6 +134,22 @@ namespace Twitch.Chat
             Debug.Log($"<color=yellow>{"PRIVMSG #" + credentials.ChannelName + " :" + data.Message}</color>");
             _writer.WriteLine("PRIVMSG #" + credentials.ChannelName + " : " + data.Message);
             _writer.Flush();
+        }
+
+        public void SendFinalMessage(string name)
+        {
+            string finalMessageWithName = Regex.Replace(finalMessage, vitoryNamePattern, name);
+
+            Debug.Log($"<color=yellow>{"PRIVMSG #" + credentials.ChannelName + " :" + finalMessageWithName}</color>");
+            _writer.WriteLine("PRIVMSG #" + credentials.ChannelName + " : " + finalMessageWithName);
+            _writer.Flush();
+        }
+
+
+        public void SaveFinalMessage(string message)
+        {
+            finalMessage = message;
+            PlayerPrefs.SetString(nameof(finalMessage), finalMessage);
         }
 
     }
