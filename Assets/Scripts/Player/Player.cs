@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        StartMenuManager.StartGameEvent += StartGameEvents;
+        PlayersManager.StartGameEvent += StartGameEvents;
         PlayersManager.vitoriousPlayerEvent += name => EndGameEvents(name);
     }
 

@@ -20,6 +20,7 @@ namespace Twitch.Chat
         public string Password;
     };
 
+    [Serializable]
     public struct TwitchCommandData
     {
         public string Author;

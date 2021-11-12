@@ -6,7 +6,6 @@ using Game.Util;
 
 public class PlayersManager : Singleton<PlayersManager>
 {
-    public int playerLimit = 10;
     public List<GameObject> players;
     public GameObject playerPrefab;
     public Transform finishLine;
@@ -16,18 +15,19 @@ public class PlayersManager : Singleton<PlayersManager>
     private readonly int InitialLayerNum = 6;
 
     public static Action<string> vitoriousPlayerEvent;
+    public static Action StartGameEvent;
     public static bool IsPlaying;
 
     private void Start()
     {
         players = new List<GameObject>();
         IsPlaying = false;
-        StartMenuManager.StartGameEvent += StartGame;
         CleanList();
     }
 
-    private void StartGame()
+    public void StartGame()
     {
+        StartGameEvent?.Invoke();
         IsPlaying = true;
     }
 
@@ -87,7 +87,7 @@ public class PlayersManager : Singleton<PlayersManager>
         }
     }
 
-    private void CleanList()
+    public void CleanList()
     {
         for (int i = 0; i < players.Count; i++)
         {

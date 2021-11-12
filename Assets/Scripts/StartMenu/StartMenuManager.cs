@@ -7,11 +7,11 @@ using System;
 
 public class StartMenuManager : MonoBehaviour
 {
-    public int maxPlayer = 6;
+    public int maxPlayer = 36;
     public GameObject playerNamePrefab;
     public Transform content;
     public Camera mainCamera;
-    public PlayersManager playerManager;
+    public RoundManager roundManager;
 
     public static Action StartGameEvent;
 
@@ -43,7 +43,7 @@ public class StartMenuManager : MonoBehaviour
         nameAux.GetComponentInChildren<TextMeshProUGUI>().text = data.Author;
         nameAux.GetComponentInChildren<TextMeshProUGUI>().color = data.Color;
         _playerController.Add(nameAux);
-        playerManager.AddPlayer(data);
+        roundManager.AddPlayer(data);
     }
     public void AddPlayer(string name)
     {
