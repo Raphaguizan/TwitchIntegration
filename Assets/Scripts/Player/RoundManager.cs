@@ -41,16 +41,17 @@ public class RoundManager : Singleton<RoundManager>
 
     public void BalancePlayers()
     {
-        if(listOfPlayers.Count % playerPerRoundLimit == 0)
+        Debug.Log("aki");
+        if (listOfPlayers.Count % playerPerRoundLimit == 0)
         {
             numberOfRounds = listOfPlayers.Count / playerPerRoundLimit;
         }
         else
         {
-            numberOfRounds = (int)((float)listOfPlayers.Count / (float)playerPerRoundLimit) + 1;
+            numberOfRounds = (int)Mathf.Ceil(((float)listOfPlayers.Count / (float)playerPerRoundLimit));
         }
+        int playerPerRound = (int)Mathf.Floor((float)listOfPlayers.Count / (float)numberOfRounds);
 
-        int playerPerRound = (int)((float)listOfPlayers.Count / (float)numberOfRounds);
         int restPlayers = listOfPlayers.Count - playerPerRound*numberOfRounds;
         for (int i = 0; i < numberOfRounds; i++)
         {
@@ -66,27 +67,46 @@ public class RoundManager : Singleton<RoundManager>
     private void StartGame()
     {
         BalancePlayers();
-        PlayersManager.Instance.CleanList();
         StartRound();
-        PlayersManager.Instance.StartGame();
     }
 
     public void StartRound()
     {
+        PlayersManager.Instance.CleanList();
         for (int i = 0; i < listOfPlayerPerRound[currentRound]; i++)
         {
             PlayersManager.Instance.AddPlayer(listOfPlayers[i]);
-            listOfPlayers.RemoveAt(i);
         }
+        PlayersManager.Instance.StartGame();
     }
 
     public void EndRound(string winner)
     {
-        
+        for (int i = 0; i < listOfPlayerPerRound[currentRound]; i++)
+        {
+            if (listOfPlayers[i].Author.Equals(winner))
+            {
+                listOfWinners.Add(listOfPlayers[i]);
+            }
+            listOfPlayers.RemoveAt(i);
+        }
+        currentRound++;
+
+        if (currentRound >= numberOfRounds)
+            EndBatteryOfRounds();
+
     }
 
     public void EndBatteryOfRounds()
     {
-
+        if(listOfWinners.Count == 1)
+        {
+            //Todo Ganhador
+            TwitchChat.Instance.SendFinalMessage(listOfWinners[0].Author);
+            return;
+        }
+        listOfPlayers = listOfWinners;
+        listOfWinners.Clear();
+        BalancePlayers();
     }
 }

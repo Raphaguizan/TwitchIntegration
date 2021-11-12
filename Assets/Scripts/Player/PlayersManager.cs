@@ -71,7 +71,6 @@ public class PlayersManager : Singleton<PlayersManager>
     {
         IsPlaying = false;
         vitoriousPlayerEvent?.Invoke(name);
-        TwitchChat.Instance.SendFinalMessage(name);
     }
 
     private void CameraAdjust()

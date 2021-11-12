@@ -15,13 +15,16 @@ public class Player : MonoBehaviour
     private Camera _playerCamera;
     [SerializeField]
     private GameObject _virtualCamera;
-    [SerializeField]
-    private TextMeshProUGUI _nameArea;
-    
+
+
     [Space]
     [SerializeField]
+    private GameObject canvas;
+    [SerializeField]
     private EnergyBar enegyBar;
-    
+    [SerializeField]
+    private TextMeshProUGUI _nameArea;
+
     [Space]
     [SerializeField]
     private PlayerAnimations animations;
@@ -58,7 +61,12 @@ public class Player : MonoBehaviour
     }
 
     #region fill
-    public void AddFill(float add, bool crit)
+    public void AddFill()
+    {
+        float fillToAdd = UnityEngine.Random.Range(.01f, .2f);
+        AddFill(fillToAdd, (fillToAdd / .2f) >= .9f);
+    }
+    public void AddFill(float add, bool crit = false)
     {
         if (!CanCharge) return;
         if (enegyBar.currentFill >= 1)
@@ -74,6 +82,7 @@ public class Player : MonoBehaviour
     #region run
     private void Update()
     {
+        canvas.transform.LookAt(2 * canvas.transform.position - _virtualCamera.transform.position);
         if (_isRunning && PlayersManager.IsPlaying)
         {
             transform.Translate(new Vector3(0,0, runningSpeed * Time.deltaTime));
