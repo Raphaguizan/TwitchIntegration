@@ -17,7 +17,7 @@ public class PlayerAnimations : MonoBehaviour
 
     private Animator myAnim;
     // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
         myAnim = GetComponent<Animator>();
     }

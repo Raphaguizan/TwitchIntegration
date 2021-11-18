@@ -13,25 +13,31 @@ public class RoundManager : Singleton<RoundManager>
     [SerializeField]
     private int numberOfRounds = 0;
     [SerializeField]
-    private int currentRound = 0;
+    public int currentRound = 0;
 
     [SerializeField]
     public List<TwitchCommandData> listOfPlayers;
     [SerializeField]
     public List<TwitchCommandData> listOfWinners;
 
-    private List<int> listOfPlayerPerRound;
+    public List<int> ListOfPlayerPerRound { get; private set; }
+    
+    public static bool PlayerIsBalanced = false;
 
-
-    private void Start()
+    private void OnEnable()
     {
         listOfPlayers = new List<TwitchCommandData>();
         listOfWinners = new List<TwitchCommandData>();
-        listOfPlayerPerRound = new List<int>();
+        ListOfPlayerPerRound = new List<int>();
 
         StartMenuManager.StartGameEvent += StartGame;
         PlayersManager.vitoriousPlayerEvent += name => EndRound(name);
-        //BalancePlayers();
+    }
+
+    private void OnDisable()
+    {
+        StartMenuManager.StartGameEvent -= StartGame;
+        PlayersManager.vitoriousPlayerEvent -= name => EndRound(name);
     }
 
     public void AddPlayer(TwitchCommandData data)
@@ -42,6 +48,7 @@ public class RoundManager : Singleton<RoundManager>
     public void BalancePlayers()
     {
         Debug.Log("aki");
+        ListOfPlayerPerRound.Clear();
         if (listOfPlayers.Count % playerPerRoundLimit == 0)
         {
             numberOfRounds = listOfPlayers.Count / playerPerRoundLimit;
@@ -55,13 +62,14 @@ public class RoundManager : Singleton<RoundManager>
         int restPlayers = listOfPlayers.Count - playerPerRound*numberOfRounds;
         for (int i = 0; i < numberOfRounds; i++)
         {
-            listOfPlayerPerRound.Add(playerPerRound);
+            ListOfPlayerPerRound.Add(playerPerRound);
             if(restPlayers > 0)
             {
-                listOfPlayerPerRound[i]++;
+                ListOfPlayerPerRound[i]++;
                 restPlayers--;
             }
         }
+        PlayerIsBalanced = true;
     }
 
     private void StartGame()
@@ -73,7 +81,7 @@ public class RoundManager : Singleton<RoundManager>
     public void StartRound()
     {
         PlayersManager.Instance.CleanList();
-        for (int i = 0; i < listOfPlayerPerRound[currentRound]; i++)
+        for (int i = 0; i < ListOfPlayerPerRound[currentRound]; i++)
         {
             PlayersManager.Instance.AddPlayer(listOfPlayers[i]);
         }
@@ -82,31 +90,45 @@ public class RoundManager : Singleton<RoundManager>
 
     public void EndRound(string winner)
     {
-        for (int i = 0; i < listOfPlayerPerRound[currentRound]; i++)
+        PlayerIsBalanced = false;
+        for (int i = 0; i < ListOfPlayerPerRound[currentRound];i++)
         {
-            if (listOfPlayers[i].Author.Equals(winner))
+            if (listOfPlayers[0].Author.Equals(winner))
             {
-                listOfWinners.Add(listOfPlayers[i]);
+                listOfWinners.Add(listOfPlayers[0]);
             }
-            listOfPlayers.RemoveAt(i);
+            listOfPlayers.RemoveAt(0);
         }
         currentRound++;
 
         if (currentRound >= numberOfRounds)
             EndBatteryOfRounds();
-
+        else
+            PlayerIsBalanced = true;
     }
 
     public void EndBatteryOfRounds()
     {
+        Debug.Log("entrou no final da chave");
         if(listOfWinners.Count == 1)
         {
-            //Todo Ganhador
+            //TODO Ganhador
             TwitchChat.Instance.SendFinalMessage(listOfWinners[0].Author);
             return;
         }
-        listOfPlayers = listOfWinners;
+        currentRound = 0;
+        listOfPlayers = CopyList(listOfWinners);
         listOfWinners.Clear();
         BalancePlayers();
+    }
+
+    private List<TwitchCommandData> CopyList(List<TwitchCommandData> copyFrom)
+    {
+        List<TwitchCommandData> copy = new List<TwitchCommandData>();
+        for (int i = 0; i < copyFrom.Count; i++)
+        {
+            copy.Add(copyFrom[i]);
+        }
+        return copy;
     }
 }

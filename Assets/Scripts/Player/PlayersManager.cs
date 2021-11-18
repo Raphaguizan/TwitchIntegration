@@ -22,7 +22,6 @@ public class PlayersManager : Singleton<PlayersManager>
     {
         players = new List<GameObject>();
         IsPlaying = false;
-        CleanList();
     }
 
     public void StartGame()

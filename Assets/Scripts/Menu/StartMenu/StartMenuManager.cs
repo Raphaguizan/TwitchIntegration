@@ -15,7 +15,7 @@ public class StartMenuManager : MonoBehaviour
 
     public static Action StartGameEvent;
 
-    private List<GameObject> _playerController;
+    protected List<GameObject> _playerController;
     private bool _canAddPlayer = true;
 
     private void OnEnable()
@@ -51,7 +51,7 @@ public class StartMenuManager : MonoBehaviour
         AddPlayer(data);
     }
 
-    private bool Duplicate(string playerName)
+    protected bool Duplicate(string playerName)
     {
         for (int i = 0; i < _playerController.Count; i++)
         {
@@ -64,7 +64,7 @@ public class StartMenuManager : MonoBehaviour
         return false;
     }
 
-    public void StartGame()
+    public virtual void StartGame()
     {
         if (_playerController.Count == 0) return;
 
@@ -74,7 +74,7 @@ public class StartMenuManager : MonoBehaviour
         StartGameEvent?.Invoke();
     }
 
-    private void CleanList()
+    protected void CleanList()
     {
         for (int i = 0; i < _playerController.Count; i++)
         {

@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     public Color playerColor;
     public float runningSpeed;
     public float fallTime;
-    public bool CanCharge { get; private set; }
+    public bool CanCharge { get; private set; } = true;
 
     [SerializeField]
     private Camera _playerCamera;
@@ -32,10 +32,16 @@ public class Player : MonoBehaviour
     private bool _isRunning;
     private Vector3 finishLine;
 
-    private void Start()
+    private void OnEnable()
     {
         PlayersManager.StartGameEvent += StartGameEvents;
         PlayersManager.vitoriousPlayerEvent += name => EndGameEvents(name);
+    }
+
+    private void OnDisable()
+    {
+        PlayersManager.StartGameEvent -= StartGameEvents;
+        PlayersManager.vitoriousPlayerEvent -= name => EndGameEvents(name);
     }
 
     public void Initialize(string name, Color color, Vector3 finish)
@@ -61,11 +67,11 @@ public class Player : MonoBehaviour
     }
 
     #region fill
-    public void AddFill()
-    {
-        float fillToAdd = UnityEngine.Random.Range(.01f, .2f);
-        AddFill(fillToAdd, (fillToAdd / .2f) >= .9f);
-    }
+    //public void AddFill()
+    //{
+    //    float fillToAdd = UnityEngine.Random.Range(.01f, .2f);
+    //    AddFill(fillToAdd, (fillToAdd / .2f) >= .9f);
+    //}
     public void AddFill(float add, bool crit = false)
     {
         if (!CanCharge) return;
@@ -128,6 +134,12 @@ public class Player : MonoBehaviour
     #region game Events
     private void StartGameEvents()
     {
+        StartCoroutine(WaitInitialize());
+    }
+
+    IEnumerator WaitInitialize()
+    {
+        yield return new WaitUntil(() => !CanCharge);
         animations.TriggerCharge();
         CanCharge = true;
     }
