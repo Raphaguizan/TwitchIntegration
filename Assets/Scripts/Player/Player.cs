@@ -5,19 +5,22 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
+    [Header("Configurations")]
     public string playerName;
     public Color playerColor;
     public float runningSpeed;
     public float fallTime;
     public bool CanCharge { get; private set; } = true;
 
+    [Header("Cameras")]
     [SerializeField]
     private Camera _playerCamera;
     [SerializeField]
     private GameObject _virtualCamera;
+    [SerializeField]
+    private GameObject _virtualCameraCharge;
 
-
-    [Space]
+    [Header("Player HUD")]
     [SerializeField]
     private GameObject canvas;
     [SerializeField]
@@ -25,7 +28,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _nameArea;
 
-    [Space]
+    [Header("Animations")]
     [SerializeField]
     private PlayerAnimations animations;
 
@@ -34,13 +37,11 @@ public class Player : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log("ligando o player: "+playerName);
         PlayersManager.StartGameEvent += StartGameEvents;
         PlayersManager.vitoriousPlayerEvent += name => EndGameEvents(name);
     }
     private void OnDisable()
     {
-        Debug.Log("player " + playerName + " destroyed");
         PlayersManager.StartGameEvent -= StartGameEvents;
         PlayersManager.vitoriousPlayerEvent -= name => EndGameEvents(name);
     }
@@ -51,6 +52,7 @@ public class Player : MonoBehaviour
         _nameArea.text = name;
         finishLine = finish;
         _nameArea.color = playerColor;
+        
         enegyBar.SetFill(0);
 
         _isRunning = false;
@@ -64,14 +66,15 @@ public class Player : MonoBehaviour
     public void ChangeVirtualCameraLayer(int Layer)
     {
         _virtualCamera.layer = Layer;
+        _virtualCameraCharge.layer = Layer;
     }
 
     #region fill
-    //public void AddFill()
-    //{
-    //    float fillToAdd = UnityEngine.Random.Range(.01f, .2f);
-    //    AddFill(fillToAdd, (fillToAdd / .2f) >= .9f);
-    //}
+    public void AddFill()
+    {
+        float fillToAdd = UnityEngine.Random.Range(.01f, .2f);
+        AddFill(fillToAdd, (fillToAdd / .2f) >= .9f);
+    }
     public void AddFill(float add, bool crit = false)
     {
         if (!CanCharge) return;
@@ -88,7 +91,7 @@ public class Player : MonoBehaviour
     #region run
     private void Update()
     {
-        canvas.transform.LookAt(2 * canvas.transform.position - _virtualCamera.transform.position);
+        canvas.transform.LookAt(2 * canvas.transform.position - _playerCamera.transform.position);
         if (_isRunning && PlayersManager.IsPlaying)
         {
             transform.Translate(new Vector3(0,0, runningSpeed * Time.deltaTime));
@@ -104,6 +107,7 @@ public class Player : MonoBehaviour
         CanCharge = false;
         _isRunning = true;
         animations.TriggerRun(_isRunning);
+        _virtualCameraCharge.SetActive(false);
         StartCoroutine(FallRandom());
     }
 
@@ -140,13 +144,13 @@ public class Player : MonoBehaviour
     IEnumerator WaitInitialize()
     {
         yield return new WaitUntil(() => !CanCharge);
+        _virtualCameraCharge.SetActive(true);
         animations.TriggerCharge();
         CanCharge = true;
     }
 
     private void EndGameEvents(string name)
     {
-        Debug.Log("o player "+playerName+" recebeu end game com nome "+name);
         if (!animations) return;
         _isRunning = false;
         if (playerName.Equals(name))
