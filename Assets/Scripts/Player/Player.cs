@@ -34,16 +34,16 @@ public class Player : MonoBehaviour
 
     private void OnEnable()
     {
+        Debug.Log("ligando o player: "+playerName);
         PlayersManager.StartGameEvent += StartGameEvents;
         PlayersManager.vitoriousPlayerEvent += name => EndGameEvents(name);
     }
-
     private void OnDisable()
     {
+        Debug.Log("player " + playerName + " destroyed");
         PlayersManager.StartGameEvent -= StartGameEvents;
         PlayersManager.vitoriousPlayerEvent -= name => EndGameEvents(name);
     }
-
     public void Initialize(string name, Color color, Vector3 finish)
     {
         playerName = name;
@@ -146,6 +146,9 @@ public class Player : MonoBehaviour
 
     private void EndGameEvents(string name)
     {
+        Debug.Log("o player "+playerName+" recebeu end game com nome "+name);
+        if (!animations) return;
+        _isRunning = false;
         if (playerName.Equals(name))
         {
             animations.TriggerWin();

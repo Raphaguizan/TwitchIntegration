@@ -89,6 +89,7 @@ public class PlayersManager : Singleton<PlayersManager>
     {
         for (int i = 0; i < players.Count; i++)
         {
+            players[i].SetActive(false);
             Destroy(players[i]);
         }
         players.Clear();

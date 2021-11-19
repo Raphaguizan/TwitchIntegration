@@ -22,8 +22,8 @@ public class NextRoundMenu : StartMenuManager
     }
     private void EnableWindow()
     {
-        _playerController = new List<GameObject>();
-        _playerController.Clear();
+        if(_playerController == null) _playerController = new List<GameObject>();
+        else CleanList();
 
         mainCamera.depth = 10;
         numOfPlayers = RoundManager.Instance.ListOfPlayerPerRound[RoundManager.Instance.currentRound];
@@ -34,12 +34,6 @@ public class NextRoundMenu : StartMenuManager
             nameAux.GetComponentInChildren<TextMeshProUGUI>().color = RoundManager.Instance.listOfPlayers[i].Color;
             _playerController.Add(nameAux);
         }
-    }
-
-    private void OpenMenu(string none)
-    {
-        //Debug.Log("entrou no wait");
-        StartCoroutine(WaitToOpen());
     }
 
     public override void StartGame()
