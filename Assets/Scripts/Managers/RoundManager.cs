@@ -113,7 +113,7 @@ public class RoundManager : Singleton<RoundManager>
         if(listOfWinners.Count == 1)
         {
             //TODO Ganhador
-            TwitchChat.Instance.SendFinalMessage(listOfWinners[0].Author);
+            TwitchChat.SendFinalMessage(listOfWinners[0].Author);
             return;
         }
         currentRound = 0;

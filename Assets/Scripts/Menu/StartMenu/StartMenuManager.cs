@@ -4,14 +4,17 @@ using UnityEngine;
 using TMPro;
 using Twitch.Chat;
 using System;
+using UnityEngine.UI;
 
 public class StartMenuManager : MonoBehaviour
 {
     public int maxPlayer = 36;
     public GameObject playerNamePrefab;
+    [Space]
     public Transform content;
+    public Scrollbar scrollBar;
+    [Space]
     public Camera mainCamera;
-    public RoundManager roundManager;
 
     public static Action StartGameEvent;
 
@@ -42,8 +45,9 @@ public class StartMenuManager : MonoBehaviour
         var nameAux = Instantiate(playerNamePrefab, content);
         nameAux.GetComponentInChildren<TextMeshProUGUI>().text = data.Author;
         nameAux.GetComponentInChildren<TextMeshProUGUI>().color = data.Color;
+        scrollBar.value = 0;
         _playerController.Add(nameAux);
-        roundManager.AddPlayer(data);
+        RoundManager.Instance.AddPlayer(data);
     }
     public void AddPlayer(string name)
     {

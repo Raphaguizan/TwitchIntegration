@@ -11,7 +11,6 @@ namespace Twitch.Chat
         public TMP_InputField UsernameInput;
         public TMP_InputField ChannelNameInput;
         public Toggle saveToggle;
-        public TwitchChat TwitchChat;
 
         private readonly string passwordKey = "Password";
         private readonly string channelNameKey = "ChannelName";

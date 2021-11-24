@@ -22,7 +22,7 @@ namespace Twitch.Chat
         private StreamReader _reader;
         private StreamWriter _writer;
 
-        public string finalMessage { get; private set; } = "Parabéns pela vitória {name}!!!";
+        public static string FinalMessage { get; private set; } = "Parabéns pela vitória {name}!!!";
 
         //regex
         readonly string messagePattern = @": *!(\w)*";
@@ -35,9 +35,9 @@ namespace Twitch.Chat
         {
             base.Awake();
             DontDestroyOnLoad(this.gameObject);
-            if (PlayerPrefs.HasKey(nameof(finalMessage)))
+            if (PlayerPrefs.HasKey(nameof(FinalMessage)))
             {
-                finalMessage = PlayerPrefs.GetString(nameof(finalMessage));
+                FinalMessage = PlayerPrefs.GetString(nameof(FinalMessage));
             }
         }
 
@@ -49,24 +49,24 @@ namespace Twitch.Chat
             }
         }
 
-        public void SetNewCommandCollection(CommandCollection commands)
+        public static void SetNewCommandCollection(CommandCollection commands)
         {
-            _commands = commands;
+            Instance._commands = commands;
         }
 
-        public void Connect(TwitchCredentials cred)
+        public static void Connect(TwitchCredentials cred)
         {
-            credentials = cred;
-            _twitchClient = new TcpClient("irc.chat.twitch.tv", 6667);
-            _reader = new StreamReader(_twitchClient.GetStream());
-            _writer = new StreamWriter(_twitchClient.GetStream());
+            Instance.credentials = cred;
+            Instance._twitchClient = new TcpClient("irc.chat.twitch.tv", 6667);
+            Instance._reader = new StreamReader(Instance._twitchClient.GetStream());
+            Instance._writer = new StreamWriter(Instance._twitchClient.GetStream());
 
-            _writer.WriteLine("PASS " + credentials.Password);
-            _writer.WriteLine("NICK " + credentials.Username);
-            _writer.WriteLine("USER " + credentials.Username + " 8 * :" + credentials.Username);
-            _writer.WriteLine("CAP REQ :twitch.tv/tags");
-            _writer.WriteLine("JOIN #" + credentials.ChannelName);
-            _writer.Flush();
+            Instance._writer.WriteLine("PASS " + Instance.credentials.Password);
+            Instance._writer.WriteLine("NICK " + Instance.credentials.Username);
+            Instance._writer.WriteLine("USER " + Instance.credentials.Username + " 8 * :" + Instance.credentials.Username);
+            Instance._writer.WriteLine("CAP REQ :twitch.tv/tags");
+            Instance._writer.WriteLine("JOIN #" + Instance.credentials.ChannelName);
+            Instance._writer.Flush();
         }
 
         private void ReadChat()
@@ -128,28 +128,30 @@ namespace Twitch.Chat
             }
         }
 
-        public void WriteChat(TwitchCommandData data)
+        public static void CopyCommand(TwitchCommandData data)
         {
-            //if (_twitchClient.Available <= 0) return;
-            Debug.Log($"<color=yellow>{"PRIVMSG #" + credentials.ChannelName + " :" + data.Message}</color>");
-            _writer.WriteLine("PRIVMSG #" + credentials.ChannelName + " : " + data.Message);
-            _writer.Flush();
+            SendChatMessage(data.Message);
         }
 
-        public void SendFinalMessage(string name)
+        public static void SendFinalMessage(string name)
         {
-            string finalMessageWithName = Regex.Replace(finalMessage, vitoryNamePattern, name);
+            string finalMessageWithName = Regex.Replace(FinalMessage, Instance.vitoryNamePattern, name);
 
-            Debug.Log($"<color=yellow>{"PRIVMSG #" + credentials.ChannelName + " :" + finalMessageWithName}</color>");
-            _writer.WriteLine("PRIVMSG #" + credentials.ChannelName + " : " + finalMessageWithName);
-            _writer.Flush();
+            SendChatMessage(finalMessageWithName);
+        }
+
+        public static void SendChatMessage(string message)
+        { 
+            Debug.Log($"<color=yellow>{"PRIVMSG #" + Instance.credentials.ChannelName + " :" + message}</color>");
+            Instance._writer.WriteLine("PRIVMSG #" + Instance.credentials.ChannelName + " : " + message);
+            Instance._writer.Flush();
         }
 
 
-        public void SaveFinalMessage(string message)
+        public static void SaveFinalMessage(string message)
         {
-            finalMessage = message;
-            PlayerPrefs.SetString(nameof(finalMessage), finalMessage);
+            FinalMessage = message;
+            PlayerPrefs.SetString(nameof(FinalMessage), FinalMessage);
         }
 
     }

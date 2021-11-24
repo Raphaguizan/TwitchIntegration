@@ -9,8 +9,13 @@ public class Menu : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(Initialize());
+    }
+    IEnumerator Initialize()
+    {
+        yield return new WaitUntil(() => CommandCollection.Initialized);
         ShowCommands();
-        finalMessageObj.text = TwitchChat.Instance.finalMessage;
+        finalMessageObj.text = TwitchChat.FinalMessage;
     }
     public void ClearData()
     {
@@ -55,6 +60,6 @@ public class Menu : MonoBehaviour
 
     public void SaveFinalMessage(string message)
     {
-        TwitchChat.Instance.SaveFinalMessage(message);
+        TwitchChat.SaveFinalMessage(message);
     }
 }
