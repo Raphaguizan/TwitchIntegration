@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Twitch.Chat;
+using Game.Util;
 using System;
 using UnityEngine.UI;
 
@@ -10,9 +11,13 @@ public class StartMenuManager : MonoBehaviour
 {
     public int maxPlayer = 36;
     public GameObject playerNamePrefab;
+    public SO_Int secondsToStart;
     [Space]
     public Transform content;
-    public Scrollbar scrollBar;
+    [SerializeField]
+    private Scrollbar scrollBar;
+    public TextMeshProUGUI numberOfPlayers;
+    public TextMeshProUGUI StartButtonText;
     [Space]
     public Camera mainCamera;
 
@@ -26,6 +31,8 @@ public class StartMenuManager : MonoBehaviour
         _playerController = new List<GameObject>();
         mainCamera.depth = 10;
         _canAddPlayer = true;
+        numberOfPlayers.text = "0";
+        StartButtonText.text = "Começar";
     }
     private void OnDisable()
     {
@@ -45,10 +52,54 @@ public class StartMenuManager : MonoBehaviour
         var nameAux = Instantiate(playerNamePrefab, content);
         nameAux.GetComponentInChildren<TextMeshProUGUI>().text = data.Author;
         nameAux.GetComponentInChildren<TextMeshProUGUI>().color = data.Color;
-        scrollBar.value = 0;
+
         _playerController.Add(nameAux);
-        RoundManager.Instance.AddPlayer(data);
+        RoundManager.AddPlayer(data);
+        
+        numberOfPlayers.text = _playerController.Count.ToString();
+
+        if (_playerController.Count == 2) StartCoroutine(AutoStartTimer());
+        StartCoroutine(ScrollBarWait());
     }
+    IEnumerator ScrollBarWait()
+    {
+        yield return new WaitForEndOfFrame();
+        scrollBar.value = 0;
+    }
+
+    protected IEnumerator AutoStartTimer()
+    {
+        int secondsCount = secondsToStart.value;
+        int initialSecondCount = secondsCount;
+        while (secondsCount >= 0)
+        {
+            StartButtonText.text = "começar... " + secondsCount.ToString("00");
+            yield return new WaitForSecondsRealtime(1f);
+
+            // envia mensagens de contagem para o chat
+            if(secondsCount == 0)
+            {
+                TwitchChat.SendChatMessage("Começou!!!");
+            }
+            else if(secondsCount % 10 == 0 || secondsCount <= 5)
+            {
+                TwitchChat.SendChatMessage("Faltam "+secondsCount+" segundos para começar!!!");
+            }
+
+            // verifica se foi alterado o tempo e recomeça a contagem
+            if(secondsToStart.value != initialSecondCount)
+            {
+                initialSecondCount = secondsToStart.value;
+                secondsCount = initialSecondCount;
+            }
+            else
+            {
+                secondsCount--;
+            }
+        }
+        StartGame();
+    }
+
     public void AddPlayer(string name)
     {
         TwitchCommandData data = new TwitchCommandData { Author = name, Message = "!JII", Color = UnityEngine.Random.ColorHSV(0,1,1,1,0,1,1,1) };
@@ -75,6 +126,7 @@ public class StartMenuManager : MonoBehaviour
         mainCamera.depth = -10;
         _canAddPlayer = false;
         gameObject.SetActive(false);
+        StopAllCoroutines();
         StartGameEvent?.Invoke();
     }
 

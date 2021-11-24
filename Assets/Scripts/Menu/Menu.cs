@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Twitch.Chat;
+using Game.Util;
 using TMPro;
 public class Menu : MonoBehaviour
 {
     public GameObject menuScreen;
+    public SO_Int secondsToAutoStart;
 
     private void Start()
     {
@@ -14,8 +16,13 @@ public class Menu : MonoBehaviour
     IEnumerator Initialize()
     {
         yield return new WaitUntil(() => CommandCollection.Initialized);
+
+        if (PlayerPrefs.HasKey("autoStart"))
+            secondsToAutoStart.value = PlayerPrefs.GetInt("autoStart");
+
         ShowCommands();
         finalMessageObj.text = TwitchChat.FinalMessage;
+        autoStartObj.text = secondsToAutoStart.value.ToString();
     }
     public void ClearData()
     {
@@ -61,5 +68,15 @@ public class Menu : MonoBehaviour
     public void SaveFinalMessage(string message)
     {
         TwitchChat.SaveFinalMessage(message);
+    }
+
+    [Space]
+    public TMP_InputField autoStartObj;
+
+    public void SaveAutoStartSeconds(string seconds)
+    {
+        int intSecond = int.Parse(seconds);
+        secondsToAutoStart.value = intSecond;
+        PlayerPrefs.SetInt("autoStart", intSecond);
     }
 }

@@ -40,12 +40,12 @@ public class RoundManager : Singleton<RoundManager>
         PlayersManager.vitoriousPlayerEvent -= name => EndRound(name);
     }
 
-    public void AddPlayer(TwitchCommandData data)
+    public static void AddPlayer(TwitchCommandData data)
     {
-        listOfPlayers.Add(data);
+        Instance.listOfPlayers.Add(data);
     }
 
-    public void BalancePlayers()
+    private void BalancePlayers()
     {
         Debug.Log("aki");
         ListOfPlayerPerRound.Clear();
@@ -78,17 +78,17 @@ public class RoundManager : Singleton<RoundManager>
         StartRound();
     }
 
-    public void StartRound()
+    public static void StartRound()
     {
         PlayersManager.Instance.CleanList();
-        for (int i = 0; i < ListOfPlayerPerRound[currentRound]; i++)
+        for (int i = 0; i < Instance.ListOfPlayerPerRound[Instance.currentRound]; i++)
         {
-            PlayersManager.Instance.AddPlayer(listOfPlayers[i]);
+            PlayersManager.Instance.AddPlayer(Instance.listOfPlayers[i]);
         }
         PlayersManager.Instance.StartGame();
     }
 
-    public void EndRound(string winner)
+    private void EndRound(string winner)
     {
         PlayerIsBalanced = false;
         for (int i = 0; i < ListOfPlayerPerRound[currentRound];i++)
@@ -107,7 +107,7 @@ public class RoundManager : Singleton<RoundManager>
             PlayerIsBalanced = true;
     }
 
-    public void EndBatteryOfRounds()
+    private void EndBatteryOfRounds()
     {
         Debug.Log("entrou no final da chave");
         if(listOfWinners.Count == 1)

@@ -27,6 +27,7 @@ public class NextRoundMenu : StartMenuManager
 
         mainCamera.depth = 10;
         numOfPlayers = RoundManager.Instance.ListOfPlayerPerRound[RoundManager.Instance.currentRound];
+        numberOfPlayers.text = numOfPlayers.ToString();
         for (int i = 0; i < numOfPlayers; i++)
         {
             var nameAux = Instantiate(playerNamePrefab, content);
@@ -34,6 +35,7 @@ public class NextRoundMenu : StartMenuManager
             nameAux.GetComponentInChildren<TextMeshProUGUI>().color = RoundManager.Instance.listOfPlayers[i].Color;
             _playerController.Add(nameAux);
         }
+        StartCoroutine(AutoStartTimer());
     }
 
     public override void StartGame()
@@ -42,7 +44,7 @@ public class NextRoundMenu : StartMenuManager
 
         mainCamera.depth = -10;
         window.SetActive(false);
-        RoundManager.Instance.StartRound();
+        RoundManager.StartRound();
     }
 
     IEnumerator WaitToOpen()
