@@ -47,7 +47,6 @@ public class RoundManager : Singleton<RoundManager>
 
     private void BalancePlayers()
     {
-        Debug.Log("aki");
         ListOfPlayerPerRound.Clear();
         if (listOfPlayers.Count % playerPerRoundLimit == 0)
         {

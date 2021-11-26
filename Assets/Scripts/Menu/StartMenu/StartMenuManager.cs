@@ -79,11 +79,13 @@ public class StartMenuManager : MonoBehaviour
             // envia mensagens de contagem para o chat
             if(secondsCount == 0)
             {
-                TwitchChat.SendChatMessage("Começou!!!");
+                TwitchChat.SendChatMessage("Em suas marcas...");
+                TwitchChat.SendChatMessage("Preparar...");
+                TwitchChat.SendChatMessage("dedsnaJii !");
             }
-            else if(secondsCount % 10 == 0 || secondsCount <= 5)
+            else if(secondsCount % 10 == 0 || secondsCount == 5)
             {
-                TwitchChat.SendChatMessage("Faltam "+secondsCount+" segundos para começar!!!");
+                TwitchChat.SendChatMessage("Faltam "+secondsCount+" segundos para começar!");
             }
 
             // verifica se foi alterado o tempo e recomeça a contagem
